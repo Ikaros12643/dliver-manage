@@ -1,6 +1,9 @@
 package com.sky.service.impl;
 
-import com.github.pagehelper.Page;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
@@ -44,7 +47,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         String password = employeeLoginDTO.getPassword();
 
         //1、根据用户名查询数据库中的数据
-        Employee employee = employeeMapper.getByUsername(username);
+        LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Employee::getUsername, employeeLoginDTO.getUsername());
+//        Employee employee = employeeMapper.getByUsername(username);
+        Employee employee = employeeMapper.selectOne(lqw);
+
 
         //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
         if (employee == null) {
@@ -53,7 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         //密码比对
-        // 后期需要进行md5加密，然后再进行比对
+        //后期需要进行md5加密，然后再进行比对
         //对前端传来的明文密码进行加密处理
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!password.equals(employee.getPassword())) {
@@ -97,16 +104,30 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setCreateUser(currentId);
         employee.setUpdateUser(currentId);
         BaseContext.removeCurrentId();
-        employeeMapper.insert(employee);
+        employeeMapper.save(employee);
     }
 
+    /**
+     * 员工分页查询及姓名模糊查询
+     * @param employeePageQueryDTO
+     * @return
+     */
     @Override
     public PageResult list(EmployeePageQueryDTO employeePageQueryDTO) {
-        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
-        List<Employee> list = employeeMapper.list();
+        LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
+        lqw.like(null!=employeePageQueryDTO.getName(), Employee::getName, employeePageQueryDTO.getName());
+        //创建mp分页对象
+        IPage<Employee> page = new Page<>(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        //向mp分页对象中存入查询结果
+        employeeMapper.selectPage(page, lqw);
+
+
+       /* PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        List<Employee> list = employeeMapper.selectList(lqw);
         System.out.println(list);
         Page<Employee> p = (Page<Employee>) list;
-        PageResult res = new PageResult(p.getTotal(), p.getResult());
+        */
+        PageResult res = new PageResult(page.getTotal(), page.getRecords());
         return  res;
     }
 }

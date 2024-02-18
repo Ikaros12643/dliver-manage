@@ -31,9 +31,16 @@
         <jaxb-api>2.3.1</jaxb-api>
         <poi>3.16</poi>
         <mysql.connector>8.0.32</mysql.connector>
+        <mybatis.plus>3.5.3.1</mybatis.plus>
     </properties>
     <dependencyManagement>
         <dependencies>
+            <!--mybatis-plus的springboot支持-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis.plus}</version>
+            </dependency>
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
