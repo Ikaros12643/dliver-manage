@@ -44,3 +44,6 @@ mybatis-plus:
   type-aliases-package: com.sky.entity
   configuration:
     map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
