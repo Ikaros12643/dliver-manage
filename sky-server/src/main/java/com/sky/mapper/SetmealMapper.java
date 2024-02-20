@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface SetmealMapper extends BaseMapper<Setmeal> {
-
     /**
      * 根据分类id查询套餐的数量
      * @param id

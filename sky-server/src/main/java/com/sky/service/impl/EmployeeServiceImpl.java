@@ -44,7 +44,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         //1、根据用户名查询数据库中的数据
         LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Employee::getUsername, employeeLoginDTO.getUsername());
+        lqw.eq(Employee::getUsername, username);
 //        Employee employee = employeeMapper.getByUsername(username);
         Employee employee = employeeMapper.selectOne(lqw);
 
@@ -100,7 +100,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setCreateUser(currentId);
         employee.setUpdateUser(currentId);
 
-        employeeMapper.save(employee);
+        employeeMapper.insert(employee);
     }
 
     /**

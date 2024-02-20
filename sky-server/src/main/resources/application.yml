@@ -46,4 +46,5 @@ mybatis-plus:
     map-underscore-to-camel-case: true
   global-config:
     db-config:
+      # 设置mp id策略为数据库自动递增
       id-type: auto
