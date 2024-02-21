@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
-import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -21,8 +20,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-
-import java.time.LocalDateTime;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -91,14 +88,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
 
         //设置当前记录的创建时间和修改时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+/*        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());*/
 
         //设置当前纪录创建人和修改人ID
         //后期需要改为当前登陆用户的id
-        Long currentId = BaseContext.getCurrentId();
+/*        Long currentId = BaseContext.getCurrentId();
         employee.setCreateUser(currentId);
-        employee.setUpdateUser(currentId);
+        employee.setUpdateUser(currentId);*/
 
         employeeMapper.insert(employee);
     }
@@ -153,8 +150,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee e = new Employee();
         BeanUtils.copyProperties(employeeDTO, e);
         //设置修改时间及修改用户
-        e.setUpdateTime(LocalDateTime.now());
-        e.setUpdateUser(BaseContext.getCurrentId());
+//        e.setUpdateTime(LocalDateTime.now());
+//        e.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.updateById(e);
     }
 }

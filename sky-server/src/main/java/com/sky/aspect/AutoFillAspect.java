@@ -7,20 +7,18 @@ package com.sky.aspect;
 import com.sky.context.BaseContext;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 /**
  * 自定义切面，实现公共字段自动填充
  */
-@Aspect
+//@Aspect
 @Slf4j
-@Component
+//@Component
 public class AutoFillAspect {
 
     /**

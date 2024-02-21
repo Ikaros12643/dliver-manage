@@ -10,6 +10,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class MpConfig {
+/*    @Bean
+    public CustomFieldFillHandler customFieldFillHandler(){
+        return new CustomFieldFillHandler();
+    }*/
 
     /**
      * 加入mp分页拦截器
