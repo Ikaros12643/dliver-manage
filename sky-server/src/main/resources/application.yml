@@ -38,6 +38,7 @@ sky:
     # 设置前端传递过来的令牌名称
     admin-token-name: token
 
+
 # mp配置
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
@@ -48,3 +49,8 @@ mybatis-plus:
     db-config:
       # 设置mp id策略为数据库自动递增
       id-type: auto
+
+ik:
+  alioss:
+    bucket-name: ${sky.alioss.bucket-name}
+    endpoint: ${sky.alioss.endpoint}
