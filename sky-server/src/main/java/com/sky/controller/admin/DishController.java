@@ -43,6 +43,19 @@ public class DishController {
     }
 
     /**
+     * 启售或停售菜品
+     * @param status
+     * @param id
+     * @return
+     */
+    @PostMapping("status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("启售或停售菜品");
+        dishService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    /**
      * 菜品的批量删除
      * @param ids
      * @return

@@ -77,6 +77,13 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    public void startOrStop(Integer status, Long id) {
+        Dish dish = Dish.builder().id(id).status(status).build();
+        dishMapper.updateById(dish);
+    }
+
+    @Override
+    @Transactional //开始事务，保证原子性
     public void deleteBatch(List<Long> ids) {
         //判断当前菜品是否能够删除 是否是启售的菜品
         List<Dish> dishes = dishMapper.selectBatchIds(ids);
@@ -100,8 +107,13 @@ public class DishServiceImpl implements DishService {
 
 
         //删除菜品表中的菜品
+        dishMapper.deleteBatchIds(ids);
 
         //删除口味数据
-
+        for (Long id : ids){
+            LambdaQueryWrapper<DishFlavor> dishFlavorLqw = new LambdaQueryWrapper<>();
+            dishFlavorLqw.eq(DishFlavor::getDishId, id);
+            dishFlavorMapper.delete(dishFlavorLqw);
+        }
     }
 }
