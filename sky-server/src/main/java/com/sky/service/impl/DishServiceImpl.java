@@ -110,10 +110,36 @@ public class DishServiceImpl implements DishService {
         dishMapper.deleteBatchIds(ids);
 
         //删除口味数据
-        for (Long id : ids){
+        /*for (Long id : ids){
             LambdaQueryWrapper<DishFlavor> dishFlavorLqw = new LambdaQueryWrapper<>();
             dishFlavorLqw.eq(DishFlavor::getDishId, id);
             dishFlavorMapper.delete(dishFlavorLqw);
-        }
+        }*/
+        LambdaQueryWrapper<DishFlavor> dishFlavorLqw = new LambdaQueryWrapper<>();
+        dishFlavorLqw.in(DishFlavor::getDishId, ids);
+        dishFlavorMapper.delete(dishFlavorLqw);
+
+    }
+
+
+    @Override
+    public DishVO getByIdWithFlavors(Long id) {
+
+        DishVO dv1 = dishMapper.getByIdWithCategoryName(id);
+        //创建Flavors查询包装器
+        //根据id查询口味数据
+        LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(DishFlavor::getDishId, id);
+        List<DishFlavor> dishFlavors = dishFlavorMapper.selectList(lqw);
+        dv1.setFlavors(dishFlavors);
+        return dv1;
+    }
+
+    @Override
+    public void updateDishWithFlavors(DishDTO dishDTO) {
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+
+        List<DishFlavor> flavors = dishDTO.getFlavors();
     }
 }

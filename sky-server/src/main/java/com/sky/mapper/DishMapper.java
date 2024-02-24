@@ -21,4 +21,11 @@ public interface DishMapper extends BaseMapper<Dish> {
     Integer countByCategoryId(Long categoryId);
 
     List<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 返回带categoryName的dishVo
+     * @param id
+     * @return
+     */
+    DishVO getByIdWithCategoryName(Long id);
 }
