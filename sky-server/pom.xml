@@ -119,10 +119,11 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
 
-<!--        <dependency>
+        <!--分页插件-->
+        <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
-        </dependency>-->
+        </dependency>
 
 <!--        <dependency>
             <groupId>org.aspectj</groupId>
