@@ -136,10 +136,29 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
+    @Transactional
     public void updateDishWithFlavors(DishDTO dishDTO) {
+        //可以把原来的口味数据统一先删掉，然后再把新的口味数据添加上
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
 
+        //修改菜品基本表信息
+        dishMapper.updateById(dish);
+
+        //删除原有口味表数据
+        LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(DishFlavor::getDishId, dishDTO.getId());
+        dishFlavorMapper.delete(lqw);
+
+        //添加新的口味
+        Long dishId = dishDTO.getId();
         List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && flavors.size() > 0) {
+            flavors.forEach(dishFlavor -> {
+                dishFlavor.setDishId(dishId);
+            });
+            dishFlavorMapper.insertBatch(flavors);
+        }
+
     }
 }
