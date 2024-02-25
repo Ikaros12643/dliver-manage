@@ -2,6 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
@@ -69,6 +70,7 @@ public class DishController {
     }
 
     /**
+     *  属于修改菜品
      *  根据id查询菜品
      */
     @GetMapping("/{id}")
@@ -90,4 +92,14 @@ public class DishController {
         return Result.success();
     }
 
+    /**
+     * 根据分类Id查询菜品
+     * 用于套餐管理页面，新建套餐时选择菜品
+     */
+    @GetMapping("/list")
+    public Result<List<Dish>> getByCategoryId(Long categoryId){
+        log.info("根据分类id查询菜品:{}", categoryId);
+        List<Dish> dishes = dishService.getByCategoryId(categoryId);
+        return Result.success(dishes);
+    }
 }
