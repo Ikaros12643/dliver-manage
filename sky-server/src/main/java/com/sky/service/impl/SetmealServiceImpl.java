@@ -129,6 +129,7 @@ public class SetmealServiceImpl implements SetmealService {
     }
 
     @Override
+    @Transactional
     public void updateSetmeal(SetmealDTO setmealDTO) {
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
