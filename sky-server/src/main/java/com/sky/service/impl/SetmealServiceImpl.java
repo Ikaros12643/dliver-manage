@@ -1,11 +1,16 @@
 package com.sky.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.exception.DeletionNotAllowedException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
@@ -17,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +36,8 @@ public class SetmealServiceImpl implements SetmealService {
     private SetmealMapper setmealMapper;
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+    @Autowired
+    private DishMapper dishMapper;
     @Override
     @Transactional
     public void save(SetmealDTO setmealDTO) {
@@ -56,5 +64,61 @@ public class SetmealServiceImpl implements SetmealService {
         Page<SetmealVO> p = (Page<SetmealVO>) setmeals;
 
         return new PageResult(p.getTotal(), p.getResult());
+    }
+
+    @Override
+    @Transactional
+    public void deleteBatch(List<Long> ids) {
+        //1.删除套餐表中的数据
+        //启售中的套餐不能删除
+        List<Setmeal> setmeals = setmealMapper.selectBatchIds(ids);
+        setmeals.forEach(setmeal -> {
+            if (setmeal.getStatus() == 1){
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+            }
+        });
+        setmealMapper.deleteBatchIds(ids);
+
+        //2.根据套餐id删除套餐菜品表中的数据
+        LambdaQueryWrapper<SetmealDish> lqw = new LambdaQueryWrapper<>();
+        lqw.in(SetmealDish::getSetmealId, ids);
+        setmealDishMapper.delete(lqw);
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        //首先判断套餐中是否包含未启售的菜品
+        LambdaQueryWrapper<SetmealDish> lqwSd = new LambdaQueryWrapper<>();
+        lqwSd.eq(SetmealDish::getSetmealId, id);
+        //获取套餐菜品数据
+        List<SetmealDish> setmealDishList = setmealDishMapper.selectList(lqwSd);
+        //得到dishId
+        List<Long> dishIdList = new ArrayList<>();
+        setmealDishList.forEach(setmealDish -> {
+            dishIdList.add(setmealDish.getDishId());
+        });
+
+        List<Dish> dishList = dishMapper.selectBatchIds(dishIdList);
+        dishList.forEach(dish -> {
+            if (dish.getStatus().equals(0)){
+                //判断需启售的套餐中有没有未启售的菜品，有的话抛出异常
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+            }
+        });
+        //启售或禁售菜品
+        Setmeal setmeal = Setmeal.builder()
+                .id(id)
+                .status(status)
+                .build();
+        setmealMapper.updateById(setmeal);
+    }
+
+    @Override
+    public SetmealVO getById(Long id) {
+
+        return null;
     }
 }
