@@ -20,4 +20,6 @@ public interface SetmealMapper extends BaseMapper<Setmeal> {
     Integer countByCategoryId(Long id);
 
     List<SetmealVO> page(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    SetmealVO getById(Long id);
 }

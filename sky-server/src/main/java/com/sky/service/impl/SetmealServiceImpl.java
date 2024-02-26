@@ -118,7 +118,13 @@ public class SetmealServiceImpl implements SetmealService {
 
     @Override
     public SetmealVO getById(Long id) {
+        SetmealVO setmealVO = setmealMapper.getById(id);
 
-        return null;
+        //获得套餐菜品信息并设置入返回数据
+        LambdaQueryWrapper<SetmealDish> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(SetmealDish::getSetmealId, id);
+        List<SetmealDish> setmealDishList = setmealDishMapper.selectList(lqw);
+        setmealVO.setSetmealDishes(setmealDishList);
+        return setmealVO;
     }
 }

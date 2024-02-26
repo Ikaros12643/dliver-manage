@@ -18,4 +18,11 @@
             </if>
         </where>
     </select>
+    <select id="getById" resultType="com.sky.vo.SetmealVO">
+        SELECT s.*, c.`name` as categoryName
+        FROM setmeal as s
+        left outer join category as c
+        on s.category_id = c.id
+        where s.id = #{id}
+    </select>
 </mapper>
