@@ -12,6 +12,11 @@ spring:
     username: ${sky.datasource.username}
     password: ${sky.datasource.password}
     type: com.alibaba.druid.pool.DruidDataSource
+  data:
+    redis:
+      host: ${sky.redis.host}
+      port: ${sky.redis.port}
+      database: ${sky.redis.database}
 # mybatis配置，以废弃
 #mybatis:
 #  #mapper配置文件
@@ -54,3 +59,4 @@ ik:
   alioss:
     bucket-name: ${sky.alioss.bucket-name}
     endpoint: ${sky.alioss.endpoint}
+

@@ -17,6 +17,7 @@
                 and s.status = #{status}
             </if>
         </where>
+        order by update_time desc
     </select>
     <select id="getById" resultType="com.sky.vo.SetmealVO">
         SELECT s.*, c.`name` as categoryName
