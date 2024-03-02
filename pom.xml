@@ -20,7 +20,7 @@
     <properties>
         <mybatis.spring>3.0.0</mybatis.spring>
         <lombok>1.18.24</lombok>
-        <fastjson>1.2.76</fastjson>
+        <fastjson>2.0.47</fastjson>
         <commons.lang>2.6</commons.lang>
         <druid>1.2.16</druid>
         <pagehelper>1.4.6</pagehelper>
@@ -32,6 +32,7 @@
         <poi>3.16</poi>
         <mysql.connector>8.0.32</mysql.connector>
         <mybatis.plus>3.5.3.2</mybatis.plus>
+        <httpclient>4.5.13</httpclient>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -54,8 +55,8 @@
             </dependency>
 
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
                 <version>${fastjson}</version>
             </dependency>
 
@@ -127,6 +128,13 @@
                 <artifactId>jaxb-runtime</artifactId>
                 <version>2.3.3</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient}</version>
+            </dependency>
+
             <!-- poi -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
