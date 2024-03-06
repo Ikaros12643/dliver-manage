@@ -20,12 +20,13 @@
     <properties>
         <mybatis.spring>3.0.0</mybatis.spring>
         <lombok>1.18.24</lombok>
-        <fastjson>2.0.47</fastjson>
+        <fastjson2>2.0.47</fastjson2>
         <commons.lang>2.6</commons.lang>
         <druid>1.2.16</druid>
         <pagehelper>1.4.6</pagehelper>
         <aliyun.sdk.oss>3.15.1</aliyun.sdk.oss>
-        <knife4j>4.4.0</knife4j>
+        <knife4j.openapi3>4.4.0</knife4j.openapi3>
+        <knife4j>3.0.2</knife4j>
         <aspectj>1.9.4</aspectj>
         <jjwt>0.9.1</jjwt>
         <jaxb-api>2.3.1</jaxb-api>
@@ -57,7 +58,7 @@
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
-                <version>${fastjson}</version>
+                <version>${fastjson2}</version>
             </dependency>
 
             <dependency>
@@ -77,11 +78,15 @@
                 <artifactId>pagehelper-spring-boot-starter</artifactId>
                 <version>${pagehelper}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <version>${knife4j}</version>
+            </dependency>
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-                <version>${knife4j}</version>
+                <version>${knife4j.openapi3}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
