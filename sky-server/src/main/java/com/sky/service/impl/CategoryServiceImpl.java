@@ -134,7 +134,7 @@ public class CategoryServiceImpl implements CategoryService {
      */
     public List<Category> list(Integer type) {
         LambdaQueryWrapper<Category> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Category::getType, type);
+        lqw.eq(type!= null, Category::getType, type);
         return categoryMapper.selectList(lqw);
     }
 }

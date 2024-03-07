@@ -162,7 +162,7 @@ public class DishServiceImpl implements DishService {
     }
 
     /**
-     * 根据分类id查询菜品
+     * 根据分类id查询菜品 管理端
      * @param categoryId
      * @return
      */
@@ -172,5 +172,17 @@ public class DishServiceImpl implements DishService {
         lqw.eq(Dish::getCategoryId, categoryId);
         List<Dish> dishes = dishMapper.selectList(lqw);
         return dishes;
+    }
+
+    @Override
+    public List<DishVO> listWithFlavor(Dish dish) {
+        List<DishVO> dishVOList = dishMapper.list(dish);
+        dishVOList.forEach(dishVO -> {
+            LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+            lqw.eq(DishFlavor::getDishId, dishVO.getId());
+            List<DishFlavor> dishFlavors = dishFlavorMapper.selectList(lqw);
+            dishVO.setFlavors(dishFlavors);
+        });
+        return dishVOList;
     }
 }

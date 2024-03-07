@@ -28,4 +28,10 @@ public interface DishMapper extends BaseMapper<Dish> {
      * @return
      */
     DishVO getByIdWithCategoryName(Long id);
+
+    @Select("select d.*, c.name as categoryName from dish as d " +
+            "left outer join category as c " +
+            "on d.category_id = c.id " +
+            "where d.category_id=#{categoryId} and d.status=#{status}")
+    List<DishVO> list(Dish dish);
 }
