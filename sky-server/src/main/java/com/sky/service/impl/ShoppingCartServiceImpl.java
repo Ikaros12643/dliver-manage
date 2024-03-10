@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sky.context.BaseContext;
 import com.sky.dto.ShoppingCartDTO;
 import com.sky.entity.Dish;
@@ -59,6 +60,24 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             //如果不存在，需要插入一条购物车数据
             shoppingCartMapper.insert(shoppingCart);
         }
+    }
 
+    @Override
+    public List<ShoppingCart> showShoppingCart() {
+        //获取到当前微信用户的id并封装成ShoppingCart对象
+        ShoppingCart shoppingCart = ShoppingCart.builder()
+                .userId(BaseContext
+                .getCurrentId())
+                .build();
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+        return list;
+    }
+
+    @Override
+    public void cleanCart() {
+        LambdaQueryWrapper<ShoppingCart> lqw = new LambdaQueryWrapper<>();
+        //获取userId并根据id删除
+        lqw.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
+        shoppingCartMapper.delete(lqw);
     }
 }
