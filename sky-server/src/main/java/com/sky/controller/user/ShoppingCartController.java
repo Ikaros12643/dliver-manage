@@ -42,10 +42,16 @@ public class ShoppingCartController {
         return Result.success(shoppingCartList);
     }
 
-    @DeleteMapping("clean")
+    @DeleteMapping("/clean")
     public Result clean(){
         log.info("清空购物车");
         shoppingCartService.cleanCart();
+        return Result.success();
+    }
+    @PostMapping("/sub")
+    public Result sub(@RequestBody ShoppingCartDTO shoppingCartDTO){
+        log.info("删除购物车中的一个商品");
+        shoppingCartService.subItem(shoppingCartDTO);
         return Result.success();
     }
 }

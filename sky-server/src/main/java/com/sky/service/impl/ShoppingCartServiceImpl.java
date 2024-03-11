@@ -73,11 +73,39 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return list;
     }
 
+    /**
+     * 清空购物车
+     */
     @Override
     public void cleanCart() {
         LambdaQueryWrapper<ShoppingCart> lqw = new LambdaQueryWrapper<>();
         //获取userId并根据id删除
         lqw.eq(ShoppingCart::getUserId, BaseContext.getCurrentId());
         shoppingCartMapper.delete(lqw);
+    }
+
+    /**
+     * 删除购物车中的一个商品
+     * @param shoppingCartDTO
+     */
+    @Override
+    public void subItem(ShoppingCartDTO shoppingCartDTO) {
+        //查出该用户当前要操作的购物车数据
+        ShoppingCart cart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO, cart);
+        List<ShoppingCart> shoppingCartList = shoppingCartMapper.list(cart);
+        //当前要减少的商品个数是否大于1，如果大于1则减一，等于1则删除数据
+        if (shoppingCartList!=null && shoppingCartList.size() > 0){
+            ShoppingCart shoppingCart = shoppingCartList.get(0);
+            if (shoppingCart.getNumber() > 1){
+                //大于1则执行更新减一操作
+                shoppingCart.setNumber(shoppingCart.getNumber()-1);
+                shoppingCartMapper.updateById(shoppingCart);
+            } else{
+                //数量等于1则直接删除该条数据
+                shoppingCartMapper.deleteById(shoppingCart.getId());
+            }
+        }
+
     }
 }
