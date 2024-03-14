@@ -172,6 +172,7 @@ public class WeChatPayUtil {
         System.out.println(jsonObject);
 
         String prepayId = jsonObject.getString("prepay_id");
+        //封装请求数据
         if (prepayId != null) {
             String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
             String nonceStr = RandomStringUtils.randomNumeric(32);
