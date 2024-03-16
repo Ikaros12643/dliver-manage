@@ -1,18 +1,23 @@
 package com.sky.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,4 +158,47 @@ public class OrderServiceImpl implements OrderService {
         ordersMapper.updateById(orders);
     }
 
+    @Override
+    public PageResult historyPage(OrdersPageQueryDTO ordersPageQueryDTO) {
+        LambdaQueryWrapper<Orders> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(ordersPageQueryDTO.getStatus()!=null, Orders::getStatus, ordersPageQueryDTO.getStatus());
+        lqw.orderByDesc(Orders::getOrderTime);
+        IPage<Orders> page = new Page<>(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+        //mp分页查询
+        ordersMapper.selectPage(page, lqw);
+        //获得分页查询的数据
+        List<Orders> ordersList = page.getRecords();
+        //封装用于返回的OrderVOList
+        List<OrderVO> orderVOList = new ArrayList<>();
+
+        if (ordersList!=null && ordersList.size()>0){
+            //遍历orderList给OrderVOList赋值
+            ordersList.forEach(order -> {
+                LambdaQueryWrapper<OrderDetail> lqw2 = new LambdaQueryWrapper<>();
+                lqw2.eq(OrderDetail::getOrderId, order.getId());
+                //查询出每个订单对应的订单详情
+                List<OrderDetail> orderDetailList = orderDetailMapper.selectList(lqw2);
+
+                OrderVO orderVO = new OrderVO();
+                BeanUtils.copyProperties(order, orderVO);
+                orderVO.setOrderDetailList(orderDetailList);
+                orderVOList.add(orderVO);
+            });
+        }
+        return new PageResult(page.getTotal(), orderVOList);
+    }
+
+    @Override
+    public OrderVO getOrderDetail(Long id) {
+        Orders order = ordersMapper.selectById(id);
+        LambdaQueryWrapper<OrderDetail> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(OrderDetail::getOrderId, id);
+        List<OrderDetail> orderDetailList = orderDetailMapper.selectList(lqw);
+
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(order, orderVO);
+        orderVO.setOrderDetailList(orderDetailList);
+
+        return orderVO;
+    }
 }
