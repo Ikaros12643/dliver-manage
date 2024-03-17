@@ -17,4 +17,9 @@ public interface ShoppingCartMapper extends BaseMapper<ShoppingCart> {
      * @return
      */
     List<ShoppingCart> list(ShoppingCart shoppingCart);
+
+    /**
+     * 批量插入购物车，用于再来一单接口
+     */
+    void insertBatch(List<ShoppingCart> shoppingCartList);
 }

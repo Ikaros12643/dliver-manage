@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Ikaros
@@ -200,5 +201,30 @@ public class OrderServiceImpl implements OrderService {
         orderVO.setOrderDetailList(orderDetailList);
 
         return orderVO;
+    }
+
+    @Override
+    public void cancelOrder(Long id) {
+        Orders order = Orders.builder()
+                .id(id)
+                .status(Orders.CANCELLED)
+                .build();
+        ordersMapper.updateById(order);
+    }
+
+    @Override
+    public void repetition(Long id) {
+        //根据订单id查询对应的订单详情
+        LambdaQueryWrapper<OrderDetail> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(OrderDetail::getOrderId, id);
+        List<OrderDetail> orderDetailList = orderDetailMapper.selectList(lqw);
+
+        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(orderDetail -> {
+            ShoppingCart cart = new ShoppingCart();
+            BeanUtils.copyProperties(orderDetail, cart);
+            cart.setUserId(BaseContext.getCurrentId());
+            return cart;
+        }).collect(Collectors.toList());
+        shoppingCartMapper.insertBatch(shoppingCartList);
     }
 }
