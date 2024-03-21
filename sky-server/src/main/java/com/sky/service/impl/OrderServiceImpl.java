@@ -17,6 +17,7 @@ import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
@@ -239,6 +240,14 @@ public class OrderServiceImpl implements OrderService {
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
         List<Orders> orderList = ordersMapper.conditionSearchPage(ordersPageQueryDTO);
         com.github.pagehelper.Page<Orders> p = (com.github.pagehelper.Page<Orders>) orderList;
+//        getO
+
         return new PageResult(p.getTotal(), p.getResult());
+    }
+
+    @Override
+    public OrderStatisticsVO statistics() {
+        OrderStatisticsVO os = ordersMapper.statistics();
+        return os;
     }
 }
