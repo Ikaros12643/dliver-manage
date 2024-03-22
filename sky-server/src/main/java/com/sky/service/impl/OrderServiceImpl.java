@@ -6,11 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
-import com.sky.dto.OrdersPageQueryDTO;
-import com.sky.dto.OrdersPaymentDTO;
-import com.sky.dto.OrdersSubmitDTO;
+import com.sky.dto.*;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
+import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
@@ -249,5 +248,98 @@ public class OrderServiceImpl implements OrderService {
     public OrderStatisticsVO statistics() {
         OrderStatisticsVO os = ordersMapper.statistics();
         return os;
+    }
+
+    /**
+     * 商家接单
+     * @param ordersConfirmDTO
+     */
+    @Override
+    public void confirm(OrdersConfirmDTO ordersConfirmDTO) {
+        ordersConfirmDTO.setStatus(Orders.CONFIRMED);
+        ordersMapper.confirm(ordersConfirmDTO);
+    }
+
+    @Override
+    public void rejection(OrdersRejectionDTO ordersRejectionDTO) {
+        //根据id查询订单
+        Orders orderDB = ordersMapper.selectById(ordersRejectionDTO.getId());
+
+        //订单只有存在且状态为2(待接单)才可以拒单
+        if (orderDB == null || !orderDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Orders order = Orders.builder()
+                .rejectionReason(ordersRejectionDTO.getRejectionReason())
+                .status(Orders.CANCELLED)
+                .id(ordersRejectionDTO.getId())
+                .cancelTime(LocalDateTime.now()).build();
+
+        //用户已支付，需要退款
+        Integer payStatus = orderDB.getPayStatus();
+        if (payStatus.equals(Orders.PAID)){
+            //调用微信支付退款接口
+            order.setPayStatus(Orders.REFUND);
+            log.info("用户退款");
+        }
+
+        //更新数据库 拒单原因 拒单时间
+        ordersMapper.updateById(order);
+    }
+
+    @Override
+    public void cancel(OrdersCancelDTO ordersCancelDTO) {
+        Orders orderDB = ordersMapper.selectById(ordersCancelDTO.getId());
+
+        Orders order = Orders.builder()
+                .cancelTime(LocalDateTime.now())
+                .cancelReason(ordersCancelDTO.getCancelReason())
+                .id(ordersCancelDTO.getId())
+                .status(Orders.CANCELLED).build();
+        if (orderDB.getPayStatus().equals(Orders.PAID)){
+            //用户退款
+            //调用微信退款api
+            order.setPayStatus(Orders.REFUND);
+            log.info("给用户退款");
+        }
+
+        ordersMapper.updateById(order);
+    }
+
+    /**
+     * 商家派送订单
+     * @param id
+     */
+    @Override
+    public void delivery(Long id) {
+        Orders orderDB = ordersMapper.selectById(id);
+
+        //订单只有存在，且订单状态为3（已接单）才可以被派送
+        if (orderDB ==null || orderDB.getPayStatus().equals(Orders.CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Orders order = Orders.builder()
+                .id(id)
+                .status(Orders.DELIVERY_IN_PROGRESS)
+                .build();
+        ordersMapper.updateById(order);
+    }
+
+    @Override
+    public void complete(Long id) {
+        Orders orderDB = ordersMapper.selectById(id);
+        //订单只有存在，且订单状态为4（派送中）才可以被完成
+        if (orderDB ==null || orderDB.getPayStatus().equals(Orders.DELIVERY_IN_PROGRESS)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Orders order = Orders.builder()
+                .id(id)
+                .status(Orders.COMPLETED)
+                .deliveryTime(LocalDateTime.now())
+                .build();
+        ordersMapper.updateById(order);
     }
 }

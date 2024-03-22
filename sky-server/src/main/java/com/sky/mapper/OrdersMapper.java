@@ -1,11 +1,13 @@
 package com.sky.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import com.sky.vo.OrderStatisticsVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -30,4 +32,9 @@ public interface OrdersMapper extends BaseMapper<Orders> {
             sum(case when `status` = 4 then 1 else 0 end) as `DELIVERY_IN_PROGRESS`\s
             from orders;""")
     OrderStatisticsVO statistics();
+
+    @Update("update orders set status = #{status} where id = #{id}")
+    void confirm(OrdersConfirmDTO ordersConfirmDTO);
+
+
 }
