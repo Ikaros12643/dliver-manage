@@ -51,6 +51,11 @@ sky:
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}
+  shop:
+    address: 陕西省西安市莲湖区北大街
+  baidu:
+    ak: gQEj4WXK8bDAfTLrElxvUgYKgK4YMSUO
+
 
 # mp配置
 mybatis-plus:
