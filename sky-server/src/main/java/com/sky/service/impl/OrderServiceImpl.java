@@ -432,4 +432,23 @@ public class OrderServiceImpl implements OrderService {
         }
 
     }
+
+    @Override
+    public void reminder(Long id) {
+        //根据id查询订单
+        Orders orderDB = ordersMapper.selectById(id);
+
+        //校验订单是否存在
+        if (orderDB == null){
+            throw new OrderBusinessException("订单不存在");
+        }
+
+        Map map = new HashMap<>();
+        map.put("type", 2);
+        map.put("orderId", id);
+        map.put("content", "订单号"+orderDB.getNumber());
+
+        //通过websocket向管理客户端推送消息
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
+    }
 }
