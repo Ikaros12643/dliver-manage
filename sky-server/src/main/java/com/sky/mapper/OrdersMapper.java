@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Ikaros
@@ -36,5 +37,10 @@ public interface OrdersMapper extends BaseMapper<Orders> {
     @Update("update orders set status = #{status} where id = #{id}")
     void confirm(OrdersConfirmDTO ordersConfirmDTO);
 
-
+    /**
+     * 根据动态条件统计营业额数据
+     * @param map
+     * @return
+     */
+    Double sumByMap(Map map);
 }
