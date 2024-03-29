@@ -35,4 +35,16 @@
             </if>
         </where>
     </select>
+    <select id="getDailyOrders" resultType="java.lang.Double">
+        select count(id) from orders
+        <where>
+            <if test="date!=null">
+                and date(order_time) = #{date}
+            </if>
+            <if test="status!=null">
+                and status = #{status};
+            </if>
+        </where>
+    </select>
+
 </mapper>

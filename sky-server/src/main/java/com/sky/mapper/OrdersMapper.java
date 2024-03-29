@@ -43,4 +43,13 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @return
      */
     Double sumByMap(Map map);
+
+    /**
+     * 根据动态条件统计每日订单数量
+     * @param map
+     * @return
+     */
+    Double getDailyOrders(Map map);
+
+
 }
