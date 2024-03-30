@@ -1,6 +1,7 @@
 package com.sky.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
@@ -9,6 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -51,5 +53,13 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      */
     Double getDailyOrders(Map map);
 
-
+    @Select("""
+               select od.name as name, sum(od.number) as number from order_detail od, orders o\s
+               where od.order_id=o.id\s
+               and o.`status` = 5\s
+               and date(o.order_time) BETWEEN #{begin} and #{end}\s
+               GROUP BY od.name\s
+               ORDER BY sum(od.number) desc\s
+               limit 0,10;""")
+    List<GoodsSalesDTO> getSalesTop10(LocalDate begin, LocalDate end);
 }
