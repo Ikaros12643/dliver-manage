@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface DishMapper extends BaseMapper<Dish> {
@@ -34,4 +35,6 @@ public interface DishMapper extends BaseMapper<Dish> {
             "on d.category_id = c.id " +
             "where d.category_id=#{categoryId} and d.status=#{status}")
     List<DishVO> list(Dish dish);
+
+    Integer countByMap(Map map);
 }
