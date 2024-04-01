@@ -62,4 +62,6 @@ public interface OrdersMapper extends BaseMapper<Orders> {
                ORDER BY sum(od.number) desc\s
                limit 0,10;""")
     List<GoodsSalesDTO> getSalesTop10(LocalDate begin, LocalDate end);
+
+    Integer countByMap(Map map);
 }
