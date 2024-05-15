@@ -63,6 +63,7 @@ public class DishServiceImpl implements DishService {
                 dishFlavor.setDishId(dishId);
             });
             dishFlavorMapper.insertBatch(flavors);
+
         }
     }
 
