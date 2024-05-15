@@ -73,7 +73,6 @@ public class DishServiceImpl implements DishService {
 
         List<DishVO> list = dishMapper.pageQuery(dishPageQueryDTO);
         Page<DishVO> p = (Page<DishVO>) list;
-
         return new PageResult(p.getTotal(), p.getResult());
     }
 
